@@ -1,5 +1,10 @@
 rootProject.name = 'ingress-article'
+
+/* Common modules */
+include 'ms_common'
+
+/* Microservices */
 include 'ms_article1'
 include 'ms_article2'
-include 'ms_common'
+
 
