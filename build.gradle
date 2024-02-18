@@ -25,11 +25,6 @@ configurations {
 	}
 }
 
-def javaProjects = [
-		project(':ms_article1'),
-		project(':ms_article2')
-]
-
 
 allprojects {
 
@@ -59,6 +54,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+def javaProjects = [
+		project(':ms_article1'),
+		project(':ms_article2')
+]
 
 configure(javaProjects) {
 	task dockerFile(type: Dockerfile, dependsOn: assemble) {
@@ -88,17 +87,13 @@ configure(javaProjects) {
 		registryCredentials.setPassword("$dockerHubPassword")
 		registryCredentials.setEmail("$dockerHubEmail")
 	}
+	task replaceNamesOfImagesInDockerCompose(dependsOn: dockerPush) {
+		file('docker-compose.yaml').text = file('docker-compose.yaml').text
+				.replaceAll('rouvsen/ing-ms23-ms_article1:.*', 'rouvsen/ing-ms23-ms_article1:' + project.version)
+				.replaceAll('rouvsen/ing-ms23-ms_article2:.*', 'rouvsen/ing-ms23-ms_article2:' + project.version)
+	}
 }
-
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-task startInitializing(dependsOn: dockerPush) {
-	file('docker-compose.yaml').text = file('docker-compose.yaml').text
-			.replaceAll('rouvsen/ing-ms23-ms_article1:.*', 'rouvsen/ing-ms23-ms_article1:' + project.version)
-	//run -> docker-compose up
-}
-
-
