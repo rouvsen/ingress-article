@@ -95,4 +95,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+task startInitializing(dependsOn: dockerPush) {
+	file('docker-compose.yaml').text = file('docker-compose.yaml').text
+			.replaceAll('rouvsen/ing-ms23-ms_article1:.*', 'rouvsen/ing-ms23-ms_article1:' + project.version)
+	//run -> docker-compose up
+}
+
 

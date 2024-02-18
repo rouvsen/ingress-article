@@ -1,7 +1,7 @@
 FROM alpine:3.18.3
 RUN apk add --no-cache openjdk17
 RUN apk add --no-cache tzdata
-COPY build/libs/ms_article2-1.0.17bc5f8.jar /app/
+COPY build/libs/ms_article2-1.0.5b24f95.jar /app/
 WORKDIR /app/
 ENTRYPOINT ["java"]
-CMD ["-jar", "/app/ms_article2-1.0.17bc5f8.jar"]
+CMD ["-jar", "/app/ms_article2-1.0.5b24f95.jar"]
