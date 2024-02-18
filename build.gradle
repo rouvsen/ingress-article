@@ -9,8 +9,6 @@ plugins {
 	id 'com.bmuschko.docker-remote-api' version "$dockerVersion" apply false
 }
 
-group = 'az.ingress'
-
 jar {
 	enabled true
 }
@@ -27,6 +25,8 @@ configurations {
 
 
 allprojects {
+
+	group = 'az.ingress'
 
 	def hash = 'git rev-parse --short HEAD'.execute().text.trim() //tag
 	version = "$projectVersion.$hash"
@@ -87,11 +87,21 @@ configure(javaProjects) {
 		registryCredentials.setPassword("$dockerHubPassword")
 		registryCredentials.setEmail("$dockerHubEmail")
 	}
-	task replaceNamesOfImagesInDockerCompose(dependsOn: dockerPush) {
+}
+
+task initializeTasks() {
+// firstly run all docker tasks (configure func. scope tasks)
+	doFirst {
 		file('docker-compose.yaml').text = file('docker-compose.yaml').text
 				.replaceAll('rouvsen/ing-ms23-ms_article1:.*', 'rouvsen/ing-ms23-ms_article1:' + project.version)
 				.replaceAll('rouvsen/ing-ms23-ms_article2:.*', 'rouvsen/ing-ms23-ms_article2:' + project.version)
 	}
+// run => docker-compose up
+//	doLast {
+//		exec {
+//			commandLine 'docker-compose', 'up'
+//		}
+//	}
 }
 
 tasks.named('test') {
