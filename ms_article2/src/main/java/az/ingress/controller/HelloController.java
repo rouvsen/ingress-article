@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/articles2")
+@RequestMapping("/hello")
 public class HelloController {
 
     private final HelloService helloService;

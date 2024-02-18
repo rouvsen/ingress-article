@@ -11,6 +11,9 @@ plugins {
 
 group = 'az.ingress'
 
+jar {
+	enabled true
+}
 
 java {
 	sourceCompatibility = '17'
