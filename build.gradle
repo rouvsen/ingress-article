@@ -71,37 +71,36 @@ configure(javaProjects) {
 		defaultCommand '-jar', "/app/${project.name}-${project.version}.jar"
 	}
 
-
 	task dockerBuild(type: DockerBuildImage, dependsOn: dockerFile) {
 		inputDir.set(file("$projectDir/."))
 		doLast {
 			println("creatig image: $dockerRepoUrl/ing-site-${project.name}:$version")
 		}
-		images.add("$dockerRepoUrl/ing-ms23-${project.name}:$version")
+		images.add("$dockerRepoUrl/${project.name}:$version")
 	}
 
 	task dockerPush(type: DockerPushImage, dependsOn: dockerBuild) {
-		images.add("$dockerRepoUrl/ing-ms23-${project.name}:$version")
+		images.add("$dockerRepoUrl/${project.name}:$version")
 
 		registryCredentials.setUsername("$dockerHubUsername")
 		registryCredentials.setPassword("$dockerHubPassword")
 		registryCredentials.setEmail("$dockerHubEmail")
 	}
-}
 
-task initializeTasks() {
-// firstly run all docker tasks (configure func. scope tasks)
-	doFirst {
-		file('docker-compose.yaml').text = file('docker-compose.yaml').text
-				.replaceAll('rouvsen/ing-ms23-ms_article1:.*', 'rouvsen/ing-ms23-ms_article1:' + project.version)
-				.replaceAll('rouvsen/ing-ms23-ms_article2:.*', 'rouvsen/ing-ms23-ms_article2:' + project.version)
+	task replaceImagesTagOnDockerCompose(dependsOn: dockerPush) {
+		def dockerComposeFile = file(rootDir.toString().concat("/docker-compose.yaml"))
+		def dockerComposeContent = dockerComposeFile.text
+		def newDockerComposeContent = dockerComposeContent.replaceAll(
+				/${dockerRepoUrl}\/${project.name}.*/,
+				"${dockerRepoUrl}/${project.name}:${project.version}"
+		)
+		dockerComposeFile.write(newDockerComposeContent)
 	}
-// run => docker-compose up
-//	doLast {
-//		exec {
-//			commandLine 'docker-compose', 'up'
-//		}
+
+//	task runDockerComposeUpCommandOnRootProjectPath(type: Exec) { //type: Exec
+//		commandLine ['docker-compose', '-f', 'docker-compose.yaml', 'up']
 //	}
+
 }
 
 tasks.named('test') {
