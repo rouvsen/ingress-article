@@ -6,5 +6,5 @@ include 'ms_common'
 /* Microservices */
 include 'ms_article1'
 include 'ms_article2'
-
+include 'ingress-aop'
 
